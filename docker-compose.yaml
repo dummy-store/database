@@ -1,0 +1,32 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_PASSWORD: "password"
+    ports:
+      - "15432:5432"
+    volumes:
+      - ${PWD}/postgres/dummy-store:/var/lib/postgresql/data
+    networks:
+      - dummy-store-network
+      
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    command: "bash -c sudo chown -R 5050:5050 ./pgadmin/"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "user@dummy.store.com"
+      PGADMIN_DEFAULT_PASSWORD: "password"
+    ports:
+      - "16543:80"
+    depends_on:
+      - postgres
+    volumes:
+      - ${PWD}/pgadmin/dummy-store:/var/lib/pgadmin
+    networks:
+      - dummy-store-network
+
+networks: 
+  dummy-store-network:
+    driver: bridge
